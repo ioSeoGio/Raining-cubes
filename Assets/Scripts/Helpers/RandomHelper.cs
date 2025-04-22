@@ -7,9 +7,10 @@ using UnityEditor;
 
 public static class RandomHelper
 {
-    private readonly static System.Random _random = new System.Random();
     private const int MinRandom = 0;
     private const int MaxRandom = 100;
+
+    private readonly static System.Random s_random = new System.Random();
 
     public static bool IsRandomEventHappened(float chance)
     {
@@ -18,7 +19,7 @@ public static class RandomHelper
 
     public static int GetRandomNumber(int min, int max)
     {
-        return _random.Next(min, max);
+        return s_random.Next(min, max);
     }
 
     public static Vector3 GetRandomPointOnTerrain(Terrain terrain, float yIndent)

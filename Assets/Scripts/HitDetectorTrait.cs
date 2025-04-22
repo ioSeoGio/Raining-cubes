@@ -1,22 +1,44 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class HitDetectorTrait : MonoBehaviour
+[RequireComponent(typeof(Renderer))]
+public class HitDetectorTrait : MonoBehaviour, IPoolableObject
 {
     [SerializeField] private int minDieDelay = 2;
     [SerializeField] private int maxDieDelay = 5;
     private bool _wasCollisionHit = false;
-    private RandomColorChanger _randomColorChanger = new();
- 
+    private ColorChanger _randomColorChanger;
+
+    public event Action<IPoolableObject> OnReturnToPoolRequested;
+
+    private void Start()
+    {
+        _randomColorChanger = new ColorChanger(GetComponent<Renderer>());
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (_wasCollisionHit == false)
         {
             _wasCollisionHit = true;
-            _randomColorChanger.ChangeColor(gameObject);
-            Destroy(gameObject, RandomHelper.GetRandomNumber(minDieDelay, maxDieDelay + 1));
+            _randomColorChanger.ChangeColor(gameObject, Color.blue);
+            StartCoroutine(ReturnToPoolAfterDelay());
         }
+    }
+
+    private IEnumerator ReturnToPoolAfterDelay()
+    {
+        float delay = RandomHelper.GetRandomNumber(minDieDelay, maxDieDelay + 1);
+        
+        yield return new WaitForSeconds(delay);
+        
+        OnReturnToPoolRequested?.Invoke(this);
+    }
+
+    public void ResetState()
+    {
+        _wasCollisionHit = false;
+        _randomColorChanger.ChangeColor(gameObject, Color.white);
     }
 }

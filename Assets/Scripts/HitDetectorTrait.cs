@@ -7,6 +7,8 @@ public class HitDetectorTrait : MonoBehaviour, IPoolableObject
 {
     [SerializeField] private int minDieDelay = 2;
     [SerializeField] private int maxDieDelay = 5;
+    [SerializeField] private Color _hitColor = Color.blue;
+    [SerializeField] private Color _defaultColor = Color.white;
     private bool _wasCollisionHit = false;
     private ColorChanger _randomColorChanger;
 
@@ -19,10 +21,10 @@ public class HitDetectorTrait : MonoBehaviour, IPoolableObject
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (_wasCollisionHit == false)
+        if (_wasCollisionHit == false && collision.gameObject.GetComponent<Platform>() != null)
         {
             _wasCollisionHit = true;
-            _randomColorChanger.ChangeColor(gameObject, Color.blue);
+            _randomColorChanger.ChangeColor(gameObject, _hitColor);
             StartCoroutine(ReturnToPoolAfterDelay());
         }
     }
@@ -39,6 +41,6 @@ public class HitDetectorTrait : MonoBehaviour, IPoolableObject
     public void ResetState()
     {
         _wasCollisionHit = false;
-        _randomColorChanger.ChangeColor(gameObject, Color.white);
+        _randomColorChanger.ChangeColor(gameObject, _defaultColor);
     }
 }

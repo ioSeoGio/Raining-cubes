@@ -12,6 +12,8 @@ public class ObjectsRain : MonoBehaviour
     [SerializeField] private int _poolCapacity = 20;
     [SerializeField] private int _poolMaxSize = 20;
 
+    private Coroutine _coroutine;
+
     private ObjectSpawner _objectSpawner = new();
     private ObjectPool<IPoolableObject> _pool;
 
@@ -20,10 +22,7 @@ public class ObjectsRain : MonoBehaviour
         _pool = new ObjectPool<IPoolableObject>(
             createFunc: () => CreateObject(),
             actionOnGet: (poolableObject) => OnGet(poolableObject),
-            actionOnRelease: (poolableObject) =>
-            {
-                poolableObject.gameObject.SetActive(false);
-            },
+            actionOnRelease: (poolableObject) => poolableObject.gameObject.SetActive(false),
             collectionCheck: true,
             defaultCapacity: _poolCapacity,
             maxSize: _poolMaxSize
@@ -32,19 +31,22 @@ public class ObjectsRain : MonoBehaviour
 
     private void OnEnable()
     {
-        StartCoroutine(SpawnObjectCoroutine());    
+        _coroutine = StartCoroutine(SpawnObjectCoroutine());    
     }
 
     private void OnDisable()
     {
-        StopCoroutine(SpawnObjectCoroutine());
+        if (_coroutine != null)
+        {
+            StopCoroutine(_coroutine);
+        }
     }
 
     private IEnumerator SpawnObjectCoroutine()
     {
         WaitForSeconds wait = new WaitForSeconds(_cooldownInSeconds);
 
-        while (true)
+        while (enabled)
         {
             _pool.Get();
             yield return wait;

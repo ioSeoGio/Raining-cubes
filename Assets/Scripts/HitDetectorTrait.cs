@@ -14,6 +14,12 @@ public class HitDetectorTrait : MonoBehaviour, IPoolableObject
 
     public event Action<IPoolableObject> ReturnToPoolRequested;
 
+    public void ResetState()
+    {
+        _wasCollisionHit = false;
+        _randomColorChanger.ChangeColor(_defaultColor);
+    }
+
     private void Start()
     {
         _randomColorChanger = new ColorChanger(GetComponent<Renderer>());
@@ -36,11 +42,5 @@ public class HitDetectorTrait : MonoBehaviour, IPoolableObject
         yield return new WaitForSeconds(delay);
         
         ReturnToPoolRequested?.Invoke(this);
-    }
-
-    public void ResetState()
-    {
-        _wasCollisionHit = false;
-        _randomColorChanger.ChangeColor(_defaultColor);
     }
 }

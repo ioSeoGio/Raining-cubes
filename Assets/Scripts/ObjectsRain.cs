@@ -62,7 +62,7 @@ public class ObjectsRain : MonoBehaviour
     private IPoolableObject CreateObject()
     {
         IPoolableObject poolableObject = _objectSpawner.Spawn(_prefab, RandomHelper.GetRandomPointOnTerrain(_terrain, _yIntend), _objectParent);
-        poolableObject.OnReturnToPoolRequested += ReturnObjectToPool;
+        poolableObject.ReturnToPoolRequested += ReturnObjectToPool;
 
         return poolableObject;
     }

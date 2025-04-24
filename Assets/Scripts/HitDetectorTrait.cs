@@ -12,7 +12,7 @@ public class HitDetectorTrait : MonoBehaviour, IPoolableObject
     private bool _wasCollisionHit = false;
     private ColorChanger _randomColorChanger;
 
-    public event Action<IPoolableObject> OnReturnToPoolRequested;
+    public event Action<IPoolableObject> ReturnToPoolRequested;
 
     private void Start()
     {
@@ -24,7 +24,7 @@ public class HitDetectorTrait : MonoBehaviour, IPoolableObject
         if (_wasCollisionHit == false && collision.gameObject.GetComponent<Platform>() != null)
         {
             _wasCollisionHit = true;
-            _randomColorChanger.ChangeColor(gameObject, _hitColor);
+            _randomColorChanger.ChangeColor(_hitColor);
             StartCoroutine(ReturnToPoolAfterDelay());
         }
     }
@@ -35,12 +35,12 @@ public class HitDetectorTrait : MonoBehaviour, IPoolableObject
         
         yield return new WaitForSeconds(delay);
         
-        OnReturnToPoolRequested?.Invoke(this);
+        ReturnToPoolRequested?.Invoke(this);
     }
 
     public void ResetState()
     {
         _wasCollisionHit = false;
-        _randomColorChanger.ChangeColor(gameObject, _defaultColor);
+        _randomColorChanger.ChangeColor(_defaultColor);
     }
 }

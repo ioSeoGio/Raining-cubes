@@ -12,7 +12,7 @@ public class ColorChanger
         _renderer = renderer;
     }
 
-    public void ChangeColor(GameObject gameObject, Color color)
+    public void ChangeColor(Color color)
     {
         _renderer.material.color = color;
     }
